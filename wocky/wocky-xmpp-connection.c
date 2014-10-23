@@ -1231,3 +1231,13 @@ wocky_xmpp_connection_force_close_finish (
 
   return TRUE;
 }
+guint
+wocky_xmpp_connection_get_stanza_recv_count (WockyXmppConnection *connection)
+{
+  return wocky_xmpp_reader_get_recv_count (connection->priv->reader);
+}
+void
+wocky_xmpp_connection_set_stanza_recv_count (WockyXmppConnection *connection, guint count)
+{
+  wocky_xmpp_reader_set_recv_count (connection->priv->reader, count);
+}

@@ -210,4 +210,7 @@
 #define WOCKY_NS_VCARD_TEMP           "vcard-temp"
 #define WOCKY_NS_VCARD_TEMP_UPDATE    "vcard-temp:x:update"
 
+/* XEP-0198 (Stream Management) */
+#define WOCKY_NS_STREAM_MANAGEMENT "urn:xmpp:sm:3"
+
 #endif /* #ifndef __WOCKY_NAMESPACES_H__ */

@@ -37,6 +37,7 @@ static GDebugKey keys[] = {
   { "presence",          WOCKY_DEBUG_PRESENCE          },
   { "connection-factory",WOCKY_DEBUG_CONNECTION_FACTORY},
   { "media",             WOCKY_DEBUG_JINGLE            },
+  { "streammanagement",  WOCKY_DEBUG_SM                },
   { 0, },
 };
 

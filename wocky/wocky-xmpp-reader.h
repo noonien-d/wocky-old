@@ -130,6 +130,8 @@ WockyStanza *wocky_xmpp_reader_peek_stanza (WockyXmppReader *reader);
 
 GError *wocky_xmpp_reader_get_error (WockyXmppReader *reader);
 void wocky_xmpp_reader_reset (WockyXmppReader *reader);
+guint wocky_xmpp_reader_get_recv_count (WockyXmppReader *reader);
+void wocky_xmpp_reader_set_recv_count (WockyXmppReader *reader, guint count);
 
 G_END_DECLS
 
