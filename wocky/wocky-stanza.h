@@ -86,6 +86,7 @@ GType wocky_stanza_get_type (void);
  * @WOCKY_STANZA_TYPE_SUCCESS: <code>&lt;success/&gt;</code> stanza
  * @WOCKY_STANZA_TYPE_FAILURE: <code>&lt;failure/&gt;</code> stanza
  * @WOCKY_STANZA_TYPE_STREAM_ERROR: <code>&lt;stream:error/&gt;</code> stanza
+ * @WOCKY_STANZA_TYPE_ENABLE: <code>&lt;enable/&gt;</code> stanza
  * @WOCKY_STANZA_TYPE_UNKNOWN: unknown stanza type
  *
  * XMPP stanza types.
@@ -104,6 +105,8 @@ typedef enum
   WOCKY_STANZA_TYPE_SUCCESS,
   WOCKY_STANZA_TYPE_FAILURE,
   WOCKY_STANZA_TYPE_STREAM_ERROR,
+  WOCKY_STANZA_TYPE_ENABLE,
+  WOCKY_STANZA_TYPE_SM_R,
   WOCKY_STANZA_TYPE_UNKNOWN,
   /*< private >*/
   NUM_WOCKY_STANZA_TYPE
@@ -175,6 +178,7 @@ gboolean wocky_stanza_has_type (WockyStanza *stanza,
 
 const gchar *wocky_stanza_get_from (WockyStanza *self);
 const gchar *wocky_stanza_get_to (WockyStanza *self);
+guint wocky_stanza_get_recv_count (WockyStanza *self);
 
 WockyStanza * wocky_stanza_build_va (WockyStanzaType type,
     WockyStanzaSubType sub_type,
@@ -210,6 +214,8 @@ void wocky_stanza_set_to_contact (WockyStanza *self,
     WockyContact *contact);
 void wocky_stanza_set_from_contact (WockyStanza *self,
     WockyContact *contact);
+void wocky_stanza_set_recv_count (WockyStanza *self,
+    guint count);
 
 G_END_DECLS
 

@@ -32,6 +32,7 @@ typedef enum
   WOCKY_DEBUG_PRESENCE          = 1 << 19,
   WOCKY_DEBUG_CONNECTION_FACTORY= 1 << 20,
   WOCKY_DEBUG_JINGLE            = 1 << 21,
+  WOCKY_DEBUG_SM                = 1 << 22,
 } WockyDebugFlags;
 
 #define WOCKY_DEBUG_XMPP (WOCKY_DEBUG_XMPP_READER | WOCKY_DEBUG_XMPP_WRITER)

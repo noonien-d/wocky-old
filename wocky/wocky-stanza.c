@@ -41,6 +41,7 @@ struct _WockyStanzaPrivate
   WockyContact *from_contact;
   WockyContact *to_contact;
 
+  guint recv_count;
   gboolean dispose_has_run;
 };
 
@@ -78,6 +79,10 @@ static StanzaTypeName type_names[NUM_WOCKY_STANZA_TYPE] =
         WOCKY_XMPP_NS_SASL_AUTH },
     { WOCKY_STANZA_TYPE_STREAM_ERROR,    "error",
         WOCKY_XMPP_NS_STREAM },
+    { WOCKY_STANZA_TYPE_ENABLE,          "enable",
+        WOCKY_NS_STREAM_MANAGEMENT },
+    { WOCKY_STANZA_TYPE_SM_R,            "r",
+        WOCKY_NS_STREAM_MANAGEMENT },
     { WOCKY_STANZA_TYPE_UNKNOWN,         NULL,        NULL },
 };
 
@@ -775,6 +780,17 @@ wocky_stanza_get_to (WockyStanza *self)
   g_return_val_if_fail (WOCKY_IS_STANZA (self), NULL);
 
   return wocky_node_get_attribute (wocky_stanza_get_top_node (self), "to");
+}
+
+guint
+wocky_stanza_get_recv_count (WockyStanza *self)
+{
+  return self->priv->recv_count;
+}
+void
+wocky_stanza_set_recv_count (WockyStanza *self, guint count)
+{
+  self->priv->recv_count = count;
 }
 
 WockyContact *

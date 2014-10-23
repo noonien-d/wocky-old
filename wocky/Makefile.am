@@ -100,6 +100,7 @@ handwritten_headers = \
   wocky-sasl-scram.h \
   wocky-sasl-plain.h \
   wocky-session.h \
+  wocky-sm.h \
   wocky-stanza.h \
   wocky-tls.h \
   wocky-tls-handler.h \
@@ -166,6 +167,7 @@ handwritten_sources = \
   wocky-sasl-utils.c \
   wocky-sasl-plain.c \
   wocky-session.c \
+  wocky-sm.c \
   wocky-stanza.c \
   wocky-utils.c \
   wocky-tls-common.c \

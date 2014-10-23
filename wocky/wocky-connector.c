@@ -48,15 +48,15 @@
  * │  ↓
  * └→ maybe_old_ssl
  *    ↓
- *    xmpp_init ←─────────────────┬──┐
- *    ↓                           │  │
- *    xmpp_init_sent_cb           │  │
- *    ↓                           │  │
- *    xmpp_init_recv_cb           │  │
- *    │ ↓                         │  │
- *    │ xmpp_features_cb          │  │
- *    │ │ │ ↓                     │  │
- *    │ │ │ tls_module_secure_cb ─┘  │             ①
+ *    xmpp_init ←─────────────────┬────────────┐
+ *    ↓                           │            │
+ *    xmpp_init_sent_cb           │            │
+ *    ↓                           │            │
+ *    xmpp_init_recv_cb           │            │
+ *    │ ↓                         │            │
+ *    │ xmpp_features_cb          │            │
+ *    │ │ │ ↓                     │            │
+ *    │ │ │ tls_module_secure_cb ─┘            │             ①
  *    │ │ ↓                      │             ↑
  *    │ │ sasl_request_auth      │             jabber_auth_done
  *    │ │ ↓                      │             ↑
@@ -68,10 +68,16 @@
  *    │ ↓                                      │
  *    │ iq_bind_resource_recv_cb               │
  *    │ ↓                                      │
- *    │ ①                                      │
+ *    │ ①                                                                           │
  *    └──────────[old auth]────────────────────┘
  *
  *    ①
+ *    ↓
+ *    sm_enable
+ *    ↓
+ *    sm_enable_sent_cb
+ *    ↓
+ *    sm_enable_recv_cb
  *    ↓
  *    establish_session ─────────→ success
  *    ↓                              ↑
@@ -185,6 +191,10 @@ static void iq_bind_resource_sent_cb (GObject *source,
 static void iq_bind_resource_recv_cb (GObject *source,
     GAsyncResult *result,
     gpointer data);
+
+static void sm_enable(WockyConnector *self);
+static void sm_enable_sent_cb (GObject *source, GAsyncResult *result, gpointer data);
+static void sm_enable_recv_cb (GObject *source, GAsyncResult *result, gpointer data);
 
 void establish_session (WockyConnector *self);
 static void establish_session_sent_cb (GObject *source,
@@ -1232,6 +1242,7 @@ xmpp_features_cb (GObject *source,
   WockyNode   *node;
   gboolean can_encrypt = FALSE;
   gboolean can_bind = FALSE;
+  gboolean can_sm = FALSE;
 
   stanza =
     wocky_xmpp_connection_recv_stanza_finish (priv->conn, result, &error);
@@ -1271,6 +1282,14 @@ xmpp_features_cb (GObject *source,
     wocky_node_get_child_ns (node, "starttls", WOCKY_XMPP_NS_TLS) != NULL;
   can_bind =
     wocky_node_get_child_ns (node, "bind", WOCKY_XMPP_NS_BIND) != NULL;
+  can_sm =
+    wocky_node_get_child_ns (node, "sm", WOCKY_NS_STREAM_MANAGEMENT) != NULL;
+
+
+  if (can_sm)
+    g_warning ("stream supports stream management!");
+  else
+    g_warning ("stream does NOT support stream management!");
 
   /* conditions:
    * not encrypted, not encryptable, require encryption → ABORT
@@ -1888,6 +1907,69 @@ xep77_signup_recv (GObject *source,
 }
 
 /* ************************************************************************* */
+/* Stream Management calls */
+static void sm_enable(WockyConnector *self)
+{
+
+  WockyConnectorPrivate *priv = self->priv;
+  WockyStanza *enable = wocky_stanza_new("enable", WOCKY_NS_STREAM_MANAGEMENT);
+
+  DEBUG ("sending sm enable stanza");
+  wocky_xmpp_connection_send_stanza_async (priv->conn, enable, priv->cancellable,
+      sm_enable_sent_cb, self);
+
+}
+
+static void
+sm_enable_sent_cb (GObject *source,
+    GAsyncResult *result,
+    gpointer data)
+{
+  GError *error = NULL;
+  WockyConnector *self = WOCKY_CONNECTOR (data);
+  WockyConnectorPrivate *priv = self->priv;
+
+  DEBUG ("sm_enable_sent_cb");
+
+  if (!wocky_xmpp_connection_send_stanza_finish (priv->conn, result, &error))
+  {
+    abort_connect_error (self, &error, "Failed to enable sm!");
+    g_error_free (error);
+    return;
+  }
+
+  wocky_xmpp_connection_recv_stanza_async (priv->conn, priv->cancellable,
+      sm_enable_recv_cb, data);
+}
+static void
+sm_enable_recv_cb (GObject *source,
+    GAsyncResult *result,
+    gpointer data)
+{
+  GError *error = NULL;
+  WockyConnector *self = WOCKY_CONNECTOR (data);
+  WockyConnectorPrivate *priv = self->priv;
+  WockyStanza *reply = NULL;
+
+
+  reply = wocky_xmpp_connection_recv_stanza_finish (priv->conn, result, &error);
+
+  if (reply == NULL)
+  {
+    abort_connect_error (self, &error, "Failed to receive sm enable result");
+    g_error_free (error);
+      return;
+  }
+
+  wocky_xmpp_connection_set_stanza_recv_count(priv->conn, 0);
+
+  DEBUG("sm_complete: now est_ session");
+  establish_session (self);
+
+  g_object_unref (reply);
+}
+
+/* ************************************************************************* */
 /* BIND calls */
 static void
 iq_bind_resource (WockyConnector *self)
@@ -2012,7 +2094,15 @@ iq_bind_resource_recv_cb (GObject *source,
           priv->identity = g_strdup (priv->jid);
 
         priv->state = WCON_XMPP_BOUND;
-        establish_session (self);
+
+        node = wocky_stanza_get_top_node (priv->features);
+
+        if (wocky_node_get_child_ns (node, "sm", WOCKY_NS_STREAM_MANAGEMENT) != NULL)
+          sm_enable (self);
+        else
+	        establish_session (self);
+
+
         break;
 
       default:

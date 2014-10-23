@@ -190,6 +190,9 @@ void wocky_xmpp_connection_reset (WockyXmppConnection *connection);
 
 gchar * wocky_xmpp_connection_new_id (WockyXmppConnection *self);
 
+guint wocky_xmpp_connection_get_stanza_recv_count (WockyXmppConnection *connection);
+void wocky_xmpp_connection_set_stanza_recv_count (WockyXmppConnection *connection, guint count);
+
 G_END_DECLS
 
 #endif /* #ifndef __WOCKY_XMPP_CONNECTION_H__*/

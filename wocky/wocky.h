@@ -76,6 +76,7 @@
 #include "wocky-sasl-utils.h"
 #include "wocky-session.h"
 #include "wocky-stanza.h"
+#include "wocky-sm.h"
 #include "wocky-tls-connector.h"
 #include "wocky-tls.h"
 #include "wocky-tls-handler.h"
