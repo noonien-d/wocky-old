@@ -1,7 +1,6 @@
 /*
  * wocky-sm.h - Header for WockySM (Stream Management)
- * Copyright (C) 2010 Collabora Ltd.
- * @author Senko Rasic <senko.rasic@collabora.co.uk>
+ * @author Ferdinand Stehle <development@kondorgulasch.de>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
