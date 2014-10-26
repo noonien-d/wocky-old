@@ -774,6 +774,10 @@ wocky_c2s_porter_send_async (WockyPorter *porter,
       elem->cancelled_sig_id = g_cancellable_connect (cancellable,
           G_CALLBACK (send_cancelled_cb), elem, NULL);
     }
+
+  if((!wocky_stanza_has_type(stanza, WOCKY_STANZA_TYPE_SM_R))
+      && (!wocky_stanza_has_type(stanza, WOCKY_STANZA_TYPE_SM_A)))
+    wocky_sm_request_for_stanza(priv->sm, stanza);
 }
 
 static gboolean
@@ -1487,6 +1491,12 @@ wocky_c2s_porter_close_async (WockyPorter *porter,
           "A force close operation is pending");
       return;
     }
+
+  //deliberatly send one last ack stanza, even if not requested
+  wocky_sm_send_a (self, wocky_xmpp_connection_get_stanza_recv_count (priv->connection));
+
+  //check for unsent stanzas
+  wocky_sm_is_unacked_stanza (self->priv->sm);
 
   priv->close_result = g_simple_async_result_new (G_OBJECT (self),
     callback, user_data, wocky_c2s_porter_close_async);

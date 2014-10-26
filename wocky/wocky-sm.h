@@ -74,6 +74,10 @@ GType wocky_sm_get_type (void);
    WockySMClass))
 
 WockySM * wocky_sm_new (WockyC2SPorter *porter);
+void wocky_sm_send_a(WockyPorter* porter, uint recv_count);
+void wocky_sm_send_r(WockyPorter* porter, uint sent_count);
+void wocky_sm_request_for_stanza(WockySM *self, WockyStanza *stanza);
+gboolean wocky_sm_is_unacked_stanza(WockySM *self);
 
 G_END_DECLS
 
