@@ -128,7 +128,7 @@ struct _WockyXmppReaderPrivate
   gchar *default_namespace;
   GQueue *stanzas;
   WockyXmppReaderState state;
-  guint stanza_read_count;
+  guint stanza_recv_count;
 };
 
 /**
@@ -224,7 +224,7 @@ wocky_xmpp_reader_init (WockyXmppReader *self)
 
   priv->nodes = g_queue_new ();
   priv->stanzas = g_queue_new ();
-  priv->stanza_read_count = 0;
+  priv->stanza_recv_count = 0;
 }
 
 static void wocky_xmpp_reader_dispose (GObject *object);
@@ -657,17 +657,15 @@ _end_element_ns (void *user_data, const xmlChar *localname,
     }
   else if (priv->depth == (priv->stream_mode ? 1 : 0))
     {
+      char buffer[30];
       g_assert (g_queue_get_length (priv->nodes) == 0);
       DEBUG_STANZA (priv->stanza, "Received stanza");
 
-      if(!wocky_stanza_has_type(priv->stanza, WOCKY_STANZA_TYPE_SM_R))
-        priv->stanza_read_count ++;
+      if((!wocky_stanza_has_type(priv->stanza, WOCKY_STANZA_TYPE_SM_R))
+        && (!wocky_stanza_has_type(priv->stanza, WOCKY_STANZA_TYPE_SM_A)))
+        priv->stanza_recv_count ++;
 
-      wocky_stanza_set_recv_count (priv->stanza, priv->stanza_read_count);
-
-      char buffer[30];
-      sprintf(buffer, "Increased_Stanza_Count:_%d", priv->stanza_read_count);
-      g_warning(buffer);
+      wocky_stanza_set_recv_count (priv->stanza, priv->stanza_recv_count);
 
       g_queue_push_tail (priv->stanzas, priv->stanza);
 
@@ -851,7 +849,7 @@ wocky_xmpp_reader_reset (WockyXmppReader *reader)
 guint
 wocky_xmpp_reader_get_recv_count (WockyXmppReader *reader)
 {
-  return reader->priv->stanza_read_count;
+  return reader->priv->stanza_recv_count;
 }
 /**
  * wocky_xmpp_reader_set_recv_count:
@@ -864,5 +862,5 @@ wocky_xmpp_reader_get_recv_count (WockyXmppReader *reader)
 void
 wocky_xmpp_reader_set_recv_count (WockyXmppReader *reader, guint count)
 {
-  reader->priv->stanza_read_count = count;
+  reader->priv->stanza_recv_count = count;
 }
