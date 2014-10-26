@@ -48,6 +48,7 @@
 #include "wocky-utils.h"
 #include "wocky-namespaces.h"
 #include "wocky-contact-factory.h"
+#include "wocky-sm.h"
 
 #define WOCKY_DEBUG_FLAG WOCKY_DEBUG_PORTER
 #include "wocky-debug-internal.h"
@@ -107,6 +108,8 @@ struct _WockyC2SPorterPrivate
   GQueue queueable_stanza_patterns;
 
   WockyXmppConnection *connection;
+
+  WockySM *sm;
 };
 
 typedef struct
@@ -351,6 +354,8 @@ wocky_c2s_porter_init (WockyC2SPorter *self)
 
   priv->iq_reply_handlers = g_hash_table_new_full (g_str_hash, g_str_equal,
       NULL, (GDestroyNotify) stanza_iq_handler_free);
+
+  priv->sm = wocky_sm_new (WOCKY_C2S_PORTER (self));
 }
 
 static void wocky_c2s_porter_dispose (GObject *object);
@@ -557,6 +562,8 @@ wocky_c2s_porter_dispose (GObject *object)
 
   if (G_OBJECT_CLASS (wocky_c2s_porter_parent_class)->dispose)
     G_OBJECT_CLASS (wocky_c2s_porter_parent_class)->dispose (object);
+
+  g_object_unref (priv->sm);
 }
 
 void
