@@ -1962,6 +1962,7 @@ sm_enable_recv_cb (GObject *source,
   }
 
   wocky_xmpp_connection_set_stanza_recv_count(priv->conn, 0);
+  wocky_xmpp_connection_set_sm_enabled(priv->conn, TRUE);
 
   DEBUG("sm_complete: now est_ session");
   establish_session (self);
