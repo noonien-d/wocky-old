@@ -355,7 +355,7 @@ wocky_c2s_porter_init (WockyC2SPorter *self)
   priv->iq_reply_handlers = g_hash_table_new_full (g_str_hash, g_str_equal,
       NULL, (GDestroyNotify) stanza_iq_handler_free);
 
-  priv->sm = wocky_sm_new (WOCKY_C2S_PORTER (self));
+  priv->sm = NULL;
 }
 
 static void wocky_c2s_porter_dispose (GObject *object);
@@ -775,9 +775,12 @@ wocky_c2s_porter_send_async (WockyPorter *porter,
           G_CALLBACK (send_cancelled_cb), elem, NULL);
     }
 
-  if((!wocky_stanza_has_type(stanza, WOCKY_STANZA_TYPE_SM_R))
-      && (!wocky_stanza_has_type(stanza, WOCKY_STANZA_TYPE_SM_A)))
-    wocky_sm_request_for_stanza(priv->sm, stanza);
+  if (priv->sm)
+  {
+    if ((!wocky_stanza_has_type(stanza, WOCKY_STANZA_TYPE_SM_R))
+        && (!wocky_stanza_has_type(stanza, WOCKY_STANZA_TYPE_SM_A)))
+      wocky_sm_request_for_stanza(priv->sm, stanza);
+  }
 }
 
 static gboolean
@@ -1246,6 +1249,14 @@ remote_connection_closed (WockyC2SPorter *self,
       priv->receive_cancellable = NULL;
     }
 
+  if (self->priv->sm)
+    //check for unacked sent stanzas
+    if(wocky_sm_is_unacked_stanza (self->priv->sm) == TRUE)
+      g_warning("Connection closed with unacked stanzas");
+      //We are missing a real handler for unacked sent stanzas:
+      //- feedback to the gui
+      //- queue for resending at the next connection
+
   g_object_unref (self);
 }
 
@@ -1398,6 +1409,17 @@ wocky_c2s_porter_start (WockyPorter *porter)
 
   priv->receive_cancellable = g_cancellable_new ();
 
+  //Connection property is now set, check for enabled stream management
+  if (wocky_xmpp_connection_get_sm_enabled( priv->connection))
+  {
+    priv->sm = wocky_sm_new (WOCKY_C2S_PORTER (self));
+    g_warning("c2s_porter: Stream Management enabled");
+  }
+  else
+  {
+    g_warning("c2s_porter: Stream Management NOT enabled");
+  }
+
   receive_stanza (self);
 }
 
@@ -1492,11 +1514,17 @@ wocky_c2s_porter_close_async (WockyPorter *porter,
       return;
     }
 
-  //deliberatly send one last ack stanza, even if not requested
-  wocky_sm_send_a (self, wocky_xmpp_connection_get_stanza_recv_count (priv->connection));
-
-  //check for unsent stanzas
-  wocky_sm_is_unacked_stanza (self->priv->sm);
+  if (priv->sm)
+  {
+    //deliberatly send one last ack stanza, even if not requested
+    wocky_sm_send_a (self, wocky_xmpp_connection_get_stanza_recv_count (priv->connection));
+    //check for unsent stanzas
+    if(wocky_sm_is_unacked_stanza (self->priv->sm) == TRUE)
+      g_warning("Connection closed with unacked stanzas");
+      //We are missing a real handler for unacked sent stanzas:
+      //- feedback to the gui
+      //- queue for resending at the next connection
+  }
 
   priv->close_result = g_simple_async_result_new (G_OBJECT (self),
     callback, user_data, wocky_c2s_porter_close_async);
