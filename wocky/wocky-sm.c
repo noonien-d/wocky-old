@@ -320,3 +320,10 @@ gboolean wocky_sm_is_unacked_stanza(WockySM *self)
   return (g_queue_get_length (self->priv->stanzas) > 0);
 }
 
+WockyStanza *
+wocky_sm_pop_unacked_stanza(WockySM *self)
+{
+  WockySMPrivate *priv = self->priv;
+
+  return WOCKY_STANZA(g_queue_pop_head (priv->stanzas));
+}

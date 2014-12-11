@@ -122,6 +122,8 @@ guint wocky_c2s_porter_register_handler_from_server (
 void wocky_c2s_porter_enable_power_saving_mode (WockyC2SPorter *porter,
     gboolean enable);
 
+WockyStanza* wocky_c2s_porter_pop_unacked_stanzas (WockyC2SPorter *porter);
+
 G_END_DECLS
 
 #endif /* #ifndef __WOCKY_C2S_PORTER_H__*/
