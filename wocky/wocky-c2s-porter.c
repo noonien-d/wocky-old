@@ -2319,3 +2319,20 @@ wocky_porter_iface_init (gpointer g_iface,
   iface->force_close_async = wocky_c2s_porter_force_close_async;
   iface->force_close_finish = wocky_c2s_porter_force_close_finish;
 }
+
+WockyStanza*
+wocky_c2s_porter_pop_unacked_stanzas (WockyC2SPorter *porter)
+{
+  WockyC2SPorterPrivate *priv = porter->priv;
+
+  if (priv->sm)
+  {
+	g_warning("wocky_sm_pop_unacked_stanza");
+	return wocky_sm_pop_unacked_stanza(priv->sm);
+  }
+  else
+  {
+	g_warning("wocky_sm_pop_unacked_stanza: sm == NULL");
+    return NULL;
+  }
+}
