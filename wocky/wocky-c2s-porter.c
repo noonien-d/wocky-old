@@ -1517,7 +1517,7 @@ wocky_c2s_porter_close_async (WockyPorter *porter,
   if (priv->sm)
   {
     //deliberatly send one last ack stanza, even if not requested
-    wocky_sm_send_a (self, wocky_xmpp_connection_get_stanza_recv_count (priv->connection));
+    wocky_sm_send_a ((WockyPorter*)self, wocky_xmpp_connection_get_stanza_recv_count (priv->connection));
     //check for unsent stanzas
     if(wocky_sm_is_unacked_stanza (self->priv->sm) == TRUE)
       g_warning("Connection closed with unacked stanzas");

@@ -657,7 +657,6 @@ _end_element_ns (void *user_data, const xmlChar *localname,
     }
   else if (priv->depth == (priv->stream_mode ? 1 : 0))
     {
-      char buffer[30];
       g_assert (g_queue_get_length (priv->nodes) == 0);
       DEBUG_STANZA (priv->stanza, "Received stanza");
 

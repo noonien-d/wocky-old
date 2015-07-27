@@ -50,7 +50,7 @@ enum
 /* private structure */
 struct _WockySMPrivate
 {
-  WockyC2SPorter *porter;
+  WockyPorter *porter;
 
   gulong sm_r_cb;
   gulong sm_a_cb;
@@ -278,7 +278,7 @@ sm_a_cb (WockyPorter *porter, WockyStanza *stanza_a, gpointer data)
 
   if (node != NULL)
   {
-    gchar *val_h = wocky_node_get_attribute (node, "h");
+    const gchar *val_h = wocky_node_get_attribute (node, "h");
     if (val_h != NULL)
     {
       WockyStanza *stanza = g_queue_pop_head (priv->stanzas);
@@ -289,7 +289,7 @@ sm_a_cb (WockyPorter *porter, WockyStanza *stanza_a, gpointer data)
         g_object_unref(stanza);
       }
       else
-        DEBUG("Got sm-ack h=%s, QUEUE IS EMPTY");
+        DEBUG("Got sm-ack h=%s, QUEUE IS EMPTY", val_h);
     }
     else
       g_warning("Failed to get h-attribute");
