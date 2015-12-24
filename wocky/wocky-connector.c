@@ -192,7 +192,7 @@ static void iq_bind_resource_recv_cb (GObject *source,
     GAsyncResult *result,
     gpointer data);
 
-static void sm_enable(WockyConnector *self);
+static void sm_enable (WockyConnector *self);
 static void sm_enable_sent_cb (GObject *source, GAsyncResult *result, gpointer data);
 static void sm_enable_recv_cb (GObject *source, GAsyncResult *result, gpointer data);
 
@@ -1908,11 +1908,11 @@ xep77_signup_recv (GObject *source,
 
 /* ************************************************************************* */
 /* Stream Management calls */
-static void sm_enable(WockyConnector *self)
+static void sm_enable (WockyConnector *self)
 {
 
   WockyConnectorPrivate *priv = self->priv;
-  WockyStanza *enable = wocky_stanza_new("enable", WOCKY_NS_STREAM_MANAGEMENT);
+  WockyStanza *enable = wocky_stanza_new ("enable", WOCKY_NS_STREAM_MANAGEMENT);
 
   DEBUG ("sending sm enable stanza");
   wocky_xmpp_connection_send_stanza_async (priv->conn, enable, priv->cancellable,
@@ -1961,8 +1961,8 @@ sm_enable_recv_cb (GObject *source,
       return;
   }
 
-  wocky_xmpp_connection_set_stanza_recv_count(priv->conn, 0);
-  wocky_xmpp_connection_set_sm_enabled(priv->conn, TRUE);
+  wocky_xmpp_connection_set_stanza_recv_count (priv->conn, 0);
+  wocky_xmpp_connection_set_sm_enabled (priv->conn, TRUE);
 
   DEBUG("sm_complete: now est_ session");
   establish_session (self);
@@ -2101,7 +2101,7 @@ iq_bind_resource_recv_cb (GObject *source,
         if (wocky_node_get_child_ns (node, "sm", WOCKY_NS_STREAM_MANAGEMENT) != NULL)
           sm_enable (self);
         else
-	        establish_session (self);
+                establish_session (self);
 
 
         break;

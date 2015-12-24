@@ -660,9 +660,11 @@ _end_element_ns (void *user_data, const xmlChar *localname,
       g_assert (g_queue_get_length (priv->nodes) == 0);
       DEBUG_STANZA (priv->stanza, "Received stanza");
 
-      if((!wocky_stanza_has_type(priv->stanza, WOCKY_STANZA_TYPE_SM_R))
-        && (!wocky_stanza_has_type(priv->stanza, WOCKY_STANZA_TYPE_SM_A)))
-        priv->stanza_recv_count ++;
+      if ((!wocky_stanza_has_type (priv->stanza, WOCKY_STANZA_TYPE_SM_R))
+          && (!wocky_stanza_has_type (priv->stanza, WOCKY_STANZA_TYPE_SM_A)))
+        {
+          priv->stanza_recv_count ++;
+        }
 
       wocky_stanza_set_recv_count (priv->stanza, priv->stanza_recv_count);
 
