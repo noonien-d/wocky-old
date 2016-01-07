@@ -121,7 +121,7 @@ wocky_sm_constructed (GObject *object)
 
   g_assert (priv->porter != NULL);
 
-  g_warning("Register SM R handler");
+  g_warning ("Register SM R handler");
   priv->sm_r_cb = wocky_porter_register_handler_from_anyone (
       WOCKY_PORTER (priv->porter),
       WOCKY_STANZA_TYPE_SM_R, WOCKY_STANZA_SUB_TYPE_NONE,
@@ -206,16 +206,16 @@ wocky_sm_new (WockyC2SPorter *porter)
  *
  * Builds and sends an ack-stanza.
  */
-void wocky_sm_send_a(WockyPorter* porter, uint recv_count)
+void wocky_sm_send_a (WockyPorter* porter, uint recv_count)
 {
-  WockyStanza *stanza_a = wocky_stanza_new("a", WOCKY_NS_STREAM_MANAGEMENT);
+  WockyStanza *stanza_a = wocky_stanza_new ("a", WOCKY_NS_STREAM_MANAGEMENT);
 
   if (stanza_a != NULL)
   {
-    WockyNode* node = wocky_stanza_get_top_node(stanza_a);
+    WockyNode* node = wocky_stanza_get_top_node (stanza_a);
     char buffer[12];
 
-    sprintf(buffer, "%d", recv_count);
+    sprintf (buffer, "%d", recv_count);
     wocky_node_set_attribute (node, "h", buffer);
 
     DEBUG("Sending sm-ack h=%d", recv_count);
@@ -230,9 +230,9 @@ void wocky_sm_send_a(WockyPorter* porter, uint recv_count)
  *
  * Builds and sends an ack-stanza.
  */
-void wocky_sm_send_r(WockyPorter* porter, uint count_sent)
+void wocky_sm_send_r (WockyPorter* porter, uint count_sent)
 {
-  WockyStanza *stanza_r = wocky_stanza_new("r", WOCKY_NS_STREAM_MANAGEMENT);
+  WockyStanza *stanza_r = wocky_stanza_new ("r", WOCKY_NS_STREAM_MANAGEMENT);
 
   if (stanza_r != NULL)
   {
@@ -255,7 +255,7 @@ static gboolean
 sm_r_cb (WockyPorter *porter, WockyStanza *stanza, gpointer data)
 {
   DEBUG("Got sm-request");
-  wocky_sm_send_a(porter,  wocky_stanza_get_recv_count(stanza));
+  wocky_sm_send_a (porter,  wocky_stanza_get_recv_count (stanza));
 
   return TRUE;
 }
@@ -274,46 +274,52 @@ sm_a_cb (WockyPorter *porter, WockyStanza *stanza_a, gpointer data)
   WockySM *self = WOCKY_SM(data);
   WockySMPrivate *priv = self->priv;
 
-  WockyNode* node = wocky_stanza_get_top_node(stanza_a);
+  WockyNode* node = wocky_stanza_get_top_node (stanza_a);
 
   if (node != NULL)
-  {
-    const gchar *val_h = wocky_node_get_attribute (node, "h");
-    if (val_h != NULL)
     {
-      WockyStanza *stanza = g_queue_pop_head (priv->stanzas);
+      const gchar *val_h = wocky_node_get_attribute (node, "h");
+      if (val_h != NULL)
+        {
+          WockyStanza *stanza = g_queue_pop_head (priv->stanzas);
 
-      if (stanza != NULL)
-      {
-        DEBUG("Got sm-ack h=%s, shouldbe=%d", val_h, wocky_stanza_get_recv_count(stanza));
-        g_object_unref(stanza);
-      }
+          if (stanza != NULL)
+            {
+              DEBUG("Got sm-ack h=%s, shouldbe=%d", val_h, wocky_stanza_get_recv_count(stanza));
+              g_object_unref (stanza);
+            }
+          else
+            {
+              DEBUG("Got sm-ack h=%s, QUEUE IS EMPTY", val_h);
+            }
+        }
       else
-        DEBUG("Got sm-ack h=%s, QUEUE IS EMPTY", val_h);
+        {
+          g_warning ("Failed to get h-attribute");
+        }
     }
-    else
-      g_warning("Failed to get h-attribute");
-  }
   else
-    g_warning("Failed to get_top_node");
+    {
+      g_warning ("Failed to get_top_node");
+    }
 
   return TRUE;
 }
 
-void wocky_sm_request_for_stanza(WockySM *self, WockyStanza *stanza)
+void wocky_sm_request_for_stanza (WockySM *self, WockyStanza *stanza)
 {
   WockySMPrivate *priv = self->priv;
 
   priv->count_sent ++;
 
-  wocky_stanza_set_recv_count(stanza, priv->count_sent);
+  wocky_stanza_set_recv_count (stanza, priv->count_sent);
 
   g_queue_push_tail (priv->stanzas, g_object_ref (stanza));
 
-  wocky_sm_send_r(priv->porter, priv->count_sent);
+  wocky_sm_send_r (priv->porter, priv->count_sent);
 }
 
-gboolean wocky_sm_is_unacked_stanza(WockySM *self)
+gboolean wocky_sm_is_unacked_stanza (WockySM *self)
 {
   DEBUG ("unacked stanza count: %d", g_queue_get_length (self->priv->stanzas));
 
@@ -321,7 +327,7 @@ gboolean wocky_sm_is_unacked_stanza(WockySM *self)
 }
 
 WockyStanza *
-wocky_sm_pop_unacked_stanza(WockySM *self)
+wocky_sm_pop_unacked_stanza (WockySM *self)
 {
   WockySMPrivate *priv = self->priv;
 
