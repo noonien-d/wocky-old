@@ -1287,9 +1287,9 @@ xmpp_features_cb (GObject *source,
 
 
   if (can_sm)
-    g_warning ("stream supports stream management!");
+    DEBUG ("stream supports stream management!");
   else
-    g_warning ("stream does NOT support stream management!");
+    DEBUG ("stream does NOT support stream management!");
 
   /* conditions:
    * not encrypted, not encryptable, require encryption → ABORT

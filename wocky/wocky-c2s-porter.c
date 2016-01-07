@@ -1421,11 +1421,11 @@ wocky_c2s_porter_start (WockyPorter *porter)
   if (wocky_xmpp_connection_get_sm_enabled (priv->connection))
     {
       priv->sm = wocky_sm_new (WOCKY_C2S_PORTER (self));
-      g_warning ("c2s_porter: Stream Management enabled");
+      DEBUG ("c2s_porter: Stream Management enabled");
     }
   else
     {
-      g_warning ("c2s_porter: Stream Management NOT enabled");
+      DEBUG ("c2s_porter: Stream Management NOT enabled");
     }
 
   receive_stanza (self);
