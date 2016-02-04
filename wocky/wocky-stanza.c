@@ -80,11 +80,11 @@ static StanzaTypeName type_names[NUM_WOCKY_STANZA_TYPE] =
     { WOCKY_STANZA_TYPE_STREAM_ERROR,    "error",
         WOCKY_XMPP_NS_STREAM },
     { WOCKY_STANZA_TYPE_ENABLE,          "enable",
-        WOCKY_NS_STREAM_MANAGEMENT },
+        WOCKY_XMPP_NS_STREAM_MANAGEMENT },
     { WOCKY_STANZA_TYPE_SM_R,            "r",
-        WOCKY_NS_STREAM_MANAGEMENT },
+        WOCKY_XMPP_NS_STREAM_MANAGEMENT },
       { WOCKY_STANZA_TYPE_SM_A,          "a",
-        WOCKY_NS_STREAM_MANAGEMENT },
+        WOCKY_XMPP_NS_STREAM_MANAGEMENT },
     { WOCKY_STANZA_TYPE_UNKNOWN,         NULL,        NULL },
 };
 
