@@ -1283,7 +1283,7 @@ xmpp_features_cb (GObject *source,
   can_bind =
     wocky_node_get_child_ns (node, "bind", WOCKY_XMPP_NS_BIND) != NULL;
   can_sm =
-    wocky_node_get_child_ns (node, "sm", WOCKY_NS_STREAM_MANAGEMENT) != NULL;
+    wocky_node_get_child_ns (node, "sm", WOCKY_XMPP_NS_STREAM_MANAGEMENT) != NULL;
 
 
   if (can_sm)
@@ -1912,7 +1912,7 @@ static void sm_enable (WockyConnector *self)
 {
 
   WockyConnectorPrivate *priv = self->priv;
-  WockyStanza *enable = wocky_stanza_new ("enable", WOCKY_NS_STREAM_MANAGEMENT);
+  WockyStanza *enable = wocky_stanza_new ("enable", WOCKY_XMPP_NS_STREAM_MANAGEMENT);
 
   DEBUG ("sending sm enable stanza");
   wocky_xmpp_connection_send_stanza_async (priv->conn, enable, priv->cancellable,
@@ -2098,7 +2098,7 @@ iq_bind_resource_recv_cb (GObject *source,
 
         node = wocky_stanza_get_top_node (priv->features);
 
-        if (wocky_node_get_child_ns (node, "sm", WOCKY_NS_STREAM_MANAGEMENT) != NULL)
+        if (wocky_node_get_child_ns (node, "sm", WOCKY_XMPP_NS_STREAM_MANAGEMENT) != NULL)
           sm_enable (self);
         else
           establish_session (self);
