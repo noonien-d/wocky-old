@@ -2115,7 +2115,7 @@ iq_bind_resource_recv_cb (GObject *source,
         if (wocky_node_get_child_ns (node, "sm", WOCKY_NS_STREAM_MANAGEMENT) != NULL)
           sm_enable (self);
         else
-                establish_session (self);
+          establish_session (self);
 
 
         break;
