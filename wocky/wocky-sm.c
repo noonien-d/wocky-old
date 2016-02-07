@@ -208,7 +208,7 @@ wocky_sm_new (WockyC2SPorter *porter)
  */
 void wocky_sm_send_a (WockyPorter* porter, uint recv_count)
 {
-  WockyStanza *stanza_a = wocky_stanza_new ("a", WOCKY_NS_STREAM_MANAGEMENT);
+  WockyStanza *stanza_a = wocky_stanza_new ("a", WOCKY_XMPP_NS_STREAM_MANAGEMENT);
 
   if (stanza_a != NULL)
   {
@@ -232,7 +232,7 @@ void wocky_sm_send_a (WockyPorter* porter, uint recv_count)
  */
 void wocky_sm_send_r (WockyPorter* porter, uint count_sent)
 {
-  WockyStanza *stanza_r = wocky_stanza_new ("r", WOCKY_NS_STREAM_MANAGEMENT);
+  WockyStanza *stanza_r = wocky_stanza_new ("r", WOCKY_XMPP_NS_STREAM_MANAGEMENT);
 
   if (stanza_r != NULL)
   {
