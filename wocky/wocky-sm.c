@@ -121,7 +121,7 @@ wocky_sm_constructed (GObject *object)
 
   g_assert (priv->porter != NULL);
 
-  g_warning ("Register SM R handler");
+  DEBUG ("Register SM R handler");
   priv->sm_r_cb = wocky_porter_register_handler_from_anyone (
       WOCKY_PORTER (priv->porter),
       WOCKY_STANZA_TYPE_SM_R, WOCKY_STANZA_SUB_TYPE_NONE,

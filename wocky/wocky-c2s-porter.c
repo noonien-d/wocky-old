@@ -2337,12 +2337,11 @@ wocky_c2s_porter_pop_unacked_stanzas (WockyC2SPorter *porter)
 
   if (priv->sm)
     {
-      g_warning ("wocky_sm_pop_unacked_stanza");
+      DEBUG ("wocky_sm_pop_unacked_stanza");
       return wocky_sm_pop_unacked_stanza (priv->sm);
     }
   else
     {
-      g_warning ("wocky_sm_pop_unacked_stanza: sm == NULL");
       return NULL;
     }
 }
