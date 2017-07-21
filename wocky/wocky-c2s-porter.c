@@ -1876,11 +1876,22 @@ wocky_c2s_porter_enable_power_saving_mode (WockyC2SPorter *porter,
     gboolean enable)
 {
   WockyC2SPorterPrivate *priv = porter->priv;
+  WockyStanza *stanza;
 
   if (priv->power_saving_mode && !enable)
     {
       flush_unimportant_queue (porter);
     }
+
+  if (enable)
+    {
+      stanza = wocky_stanza_new ("inactive", WOCKY_NS_CLIENT_STATE_INDICATION);
+    }
+  else
+    {
+      stanza = wocky_stanza_new ("active", WOCKY_NS_CLIENT_STATE_INDICATION);
+    }
+  wocky_porter_send (WOCKY_PORTER (porter), stanza);
 
   priv->power_saving_mode = enable;
 }

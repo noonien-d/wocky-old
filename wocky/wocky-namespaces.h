@@ -201,6 +201,9 @@
 #define WOCKY_NS_CHATSTATE \
   "http://jabber.org/protocol/chatstates"
 
+#define WOCKY_NS_CLIENT_STATE_INDICATION \
+  "urn:xmpp:csi:0"
+
 #define WOCKY_NS_GOOGLE_SESSION_PHONE \
   "http://www.google.com/session/phone"
 
