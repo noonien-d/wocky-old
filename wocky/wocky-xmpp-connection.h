@@ -67,6 +67,7 @@ typedef enum {
   WOCKY_XMPP_CONNECTION_FEATURE_NONE,
   WOCKY_XMPP_CONNECTION_FEATURE_SM = 1,
   WOCKY_XMPP_CONNECTION_FEATURE_SM_RESUME = 2,
+  WOCKY_XMPP_CONNECTION_FEATURE_CSI = 4,
 } WockyXmppConnectionFeature;
 
 GQuark wocky_xmpp_connection_error_quark (void);

@@ -309,6 +309,8 @@ struct _WockyConnectorPrivate
   WockyAuthRegistry *auth_registry;
 
   guint see_other_host_count;
+
+  gboolean can_csi;
 };
 
 /* choose an appropriate chunk of text describing our state for debug/error */
@@ -1071,6 +1073,9 @@ maybe_old_ssl (WockyConnector *self)
 
   priv->conn = wocky_xmpp_connection_new (G_IO_STREAM (priv->sock));
 
+  if (priv->can_csi)
+    wocky_xmpp_connection_set_feature (priv->conn, WOCKY_XMPP_CONNECTION_FEATURE_CSI);
+
   if (priv->legacy_ssl && !priv->encrypted)
     {
       WockyTLSConnector *tls_connector;
@@ -1367,6 +1372,9 @@ tls_connector_secure_cb (GObject *source,
 
   if (self->priv->conn != NULL)
     g_object_unref (self->priv->conn);
+
+  if (self->priv->can_csi)
+    wocky_xmpp_connection_set_feature (self->priv->conn, WOCKY_XMPP_CONNECTION_FEATURE_CSI);
 
   self->priv->conn = new_connection;
 
@@ -2040,6 +2048,8 @@ iq_bind_resource_recv_cb (GObject *source,
   WockyStanza *reply = NULL;
   WockyStanzaType type = WOCKY_STANZA_TYPE_NONE;
   WockyStanzaSubType sub = WOCKY_STANZA_SUB_TYPE_NONE;
+  WockyNode *node = NULL;
+  WockyConnectorError code;
 
   reply = wocky_xmpp_connection_recv_stanza_finish (priv->conn, result, &error);
   DEBUG ("bind iq response stanza received");
@@ -2064,9 +2074,6 @@ iq_bind_resource_recv_cb (GObject *source,
 
   switch (sub)
     {
-      WockyNode *node = NULL;
-      WockyConnectorError code;
-
       case WOCKY_STANZA_SUB_TYPE_ERROR:
         wocky_stanza_extract_errors (reply, NULL, &error, NULL, NULL);
 
@@ -2112,6 +2119,9 @@ iq_bind_resource_recv_cb (GObject *source,
         else
           establish_session (self);
 
+        priv->can_csi = wocky_node_get_child_ns (node, "csi", WOCKY_NS_CLIENT_STATE_INDICATION) != NULL;
+        if (priv->can_csi)
+          DEBUG("Server anounced XEP-0352 (CSI) support.");
 
         break;
 

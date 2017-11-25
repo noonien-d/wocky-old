@@ -1883,16 +1883,18 @@ wocky_c2s_porter_enable_power_saving_mode (WockyC2SPorter *porter,
       flush_unimportant_queue (porter);
     }
 
-  if (enable)
+  if (wocky_xmpp_connection_get_feature (priv->connection, WOCKY_XMPP_CONNECTION_FEATURE_CSI))
     {
-      stanza = wocky_stanza_new ("inactive", WOCKY_NS_CLIENT_STATE_INDICATION);
+      if (enable)
+        {
+          stanza = wocky_stanza_new ("inactive", WOCKY_NS_CLIENT_STATE_INDICATION);
+        }
+      else
+        {
+          stanza = wocky_stanza_new ("active", WOCKY_NS_CLIENT_STATE_INDICATION);
+        }
+      wocky_porter_send (WOCKY_PORTER (porter), stanza);
     }
-  else
-    {
-      stanza = wocky_stanza_new ("active", WOCKY_NS_CLIENT_STATE_INDICATION);
-    }
-  wocky_porter_send (WOCKY_PORTER (porter), stanza);
-
   priv->power_saving_mode = enable;
 }
 
