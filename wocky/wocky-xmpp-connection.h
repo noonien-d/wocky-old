@@ -63,6 +63,12 @@ typedef enum {
   WOCKY_XMPP_CONNECTION_ERROR_IS_OPEN,
 } WockyXmppConnectionError;
 
+typedef enum {
+  WOCKY_XMPP_CONNECTION_FEATURE_NONE,
+  WOCKY_XMPP_CONNECTION_FEATURE_SM = 1,
+  WOCKY_XMPP_CONNECTION_FEATURE_SM_RESUME = 2,
+} WockyXmppConnectionFeature;
+
 GQuark wocky_xmpp_connection_error_quark (void);
 
 /**
@@ -193,8 +199,14 @@ gchar * wocky_xmpp_connection_new_id (WockyXmppConnection *self);
 guint wocky_xmpp_connection_get_stanza_recv_count (WockyXmppConnection *connection);
 void wocky_xmpp_connection_set_stanza_recv_count (WockyXmppConnection *connection, guint count);
 
-gboolean wocky_xmpp_connection_get_sm_enabled (WockyXmppConnection *connection);
-void wocky_xmpp_connection_set_sm_enabled (WockyXmppConnection *connection, gboolean sm);
+guint wocky_xmpp_connection_get_sm_state (WockyXmppConnection *connection);
+void wocky_xmpp_connection_set_sm_state (WockyXmppConnection *connection, const gchar *id, guint sentcount);
+gchar * wocky_xmpp_connection_get_sm_id (WockyXmppConnection *connection);
+guint wocky_xmpp_connection_get_sm_sentcount (WockyXmppConnection *connection);
+
+void wocky_xmpp_connection_set_feature (WockyXmppConnection *connection, WockyXmppConnectionFeature feature);
+gboolean wocky_xmpp_connection_get_feature (WockyXmppConnection *connection, WockyXmppConnectionFeature feature);
+
 G_END_DECLS
 
 #endif /* #ifndef __WOCKY_XMPP_CONNECTION_H__*/
