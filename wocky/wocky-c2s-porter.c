@@ -1418,7 +1418,7 @@ wocky_c2s_porter_start (WockyPorter *porter)
   priv->receive_cancellable = g_cancellable_new ();
 
   //Connection property is now set, check for enabled stream management
-  if (wocky_xmpp_connection_get_sm_enabled (priv->connection))
+  if (wocky_xmpp_connection_get_feature (priv->connection, WOCKY_XMPP_CONNECTION_FEATURE_SM))
     {
       priv->sm = wocky_sm_new (WOCKY_C2S_PORTER (self));
       DEBUG ("c2s_porter: Stream Management enabled");

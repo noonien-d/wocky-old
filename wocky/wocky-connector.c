@@ -1960,10 +1960,19 @@ sm_enable_recv_cb (GObject *source,
     g_error_free (error);
       return;
   }
+  else
+  {
+    const gchar *session_id = wocky_node_get_attribute (wocky_stanza_get_top_node (reply), "id");
 
-  wocky_xmpp_connection_set_stanza_recv_count (priv->conn, 0);
-  wocky_xmpp_connection_set_sm_enabled (priv->conn, TRUE);
-
+    if (session_id)
+    {
+      session_id = g_strdup (session_id);
+      DEBUG ("got sm session id %s", session_id);
+    }
+    wocky_xmpp_connection_set_stanza_recv_count (priv->conn, 0);
+    wocky_xmpp_connection_set_feature (priv->conn, WOCKY_XMPP_CONNECTION_FEATURE_SM);
+    wocky_xmpp_connection_set_sm_state (priv->conn, session_id, 0);
+  }
   DEBUG("sm_complete: now est_ session");
   establish_session (self);
 

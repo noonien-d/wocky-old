@@ -94,7 +94,10 @@ struct _WockyXmppConnectionPrivate
 
   guint last_id;
 
-  gboolean sm_enabled;
+  const gchar *sm_session_id;
+  guint sm_sentcount;
+
+  guint stream_feats;
 };
 
 /**
@@ -127,7 +130,7 @@ wocky_xmpp_connection_init (WockyXmppConnection *self)
   priv->writer = wocky_xmpp_writer_new ();
   priv->reader = wocky_xmpp_reader_new ();
 
-  priv->sm_enabled = FALSE;
+  priv->stream_feats = WOCKY_XMPP_CONNECTION_FEATURE_NONE;
 }
 
 static void wocky_xmpp_connection_dispose (GObject *object);
@@ -1245,13 +1248,32 @@ wocky_xmpp_connection_set_stanza_recv_count (WockyXmppConnection *connection, gu
 {
   wocky_xmpp_reader_set_recv_count (connection->priv->reader, count);
 }
-gboolean
-wocky_xmpp_connection_get_sm_enabled (WockyXmppConnection *connection)
-{
-  return connection->priv->sm_enabled;
-}
 void
-wocky_xmpp_connection_set_sm_enabled (WockyXmppConnection *connection, gboolean sm)
+wocky_xmpp_connection_set_sm_state (WockyXmppConnection *connection, const gchar *id, guint sentcount)
 {
-  connection->priv->sm_enabled = sm;
+  connection->priv->sm_session_id = id;
+  connection->priv->sm_sentcount = sentcount;
 }
+gchar *
+wocky_xmpp_connection_get_sm_id (WockyXmppConnection *connection)
+{
+  return (gchar *) connection->priv->sm_session_id;
+}
+guint
+wocky_xmpp_connection_get_sm_sentcount (WockyXmppConnection *connection)
+{
+  return connection->priv->sm_sentcount;
+}
+
+void
+wocky_xmpp_connection_set_feature (WockyXmppConnection *connection, WockyXmppConnectionFeature feature)
+{
+  connection->priv->stream_feats |= feature;
+}
+
+gboolean
+wocky_xmpp_connection_get_feature (WockyXmppConnection *connection, WockyXmppConnectionFeature feature)
+{
+  return (connection->priv->stream_feats & feature);
+}
+
