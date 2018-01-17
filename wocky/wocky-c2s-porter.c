@@ -1421,7 +1421,8 @@ wocky_c2s_porter_start (WockyPorter *porter)
   if (wocky_xmpp_connection_get_feature (priv->connection, WOCKY_XMPP_CONNECTION_FEATURE_SM))
     {
       priv->sm = wocky_sm_new (WOCKY_C2S_PORTER (self));
-      DEBUG ("c2s_porter: Stream Management enabled");
+      wocky_sm_set_sentcount (priv->sm, wocky_xmpp_connection_get_sm_sentcount (priv->connection));
+      DEBUG ("c2s_porter: Stream Management enabled with sentcount = %d", wocky_xmpp_connection_get_sm_sentcount (priv->connection));
     }
   else
     {

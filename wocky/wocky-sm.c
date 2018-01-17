@@ -132,8 +132,7 @@ wocky_sm_constructed (GObject *object)
       WOCKY_STANZA_TYPE_SM_A, WOCKY_STANZA_SUB_TYPE_NONE,
       WOCKY_PORTER_HANDLER_PRIORITY_NORMAL, sm_a_cb, self, NULL);
 
-  //Session stanza has been sent after sm-establishment
-  priv->count_sent = 1;
+  priv->count_sent = 0;
   priv->stanzas = g_queue_new ();
 }
 
@@ -332,4 +331,10 @@ wocky_sm_pop_unacked_stanza (WockySM *self)
   WockySMPrivate *priv = self->priv;
 
   return WOCKY_STANZA(g_queue_pop_head (priv->stanzas));
+}
+
+void wocky_sm_set_sentcount (WockySM *self, uint sentcount)
+{
+  WockySMPrivate *priv = self->priv;
+  priv->count_sent = sentcount;
 }
