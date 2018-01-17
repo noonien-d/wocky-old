@@ -200,10 +200,10 @@ gchar * wocky_xmpp_connection_new_id (WockyXmppConnection *self);
 guint wocky_xmpp_connection_get_stanza_recv_count (WockyXmppConnection *connection);
 void wocky_xmpp_connection_set_stanza_recv_count (WockyXmppConnection *connection, guint count);
 
-guint wocky_xmpp_connection_get_sm_state (WockyXmppConnection *connection);
-void wocky_xmpp_connection_set_sm_state (WockyXmppConnection *connection, const gchar *id, guint sentcount);
+void wocky_xmpp_connection_set_sm_id (WockyXmppConnection *connection, const gchar *id);
 gchar * wocky_xmpp_connection_get_sm_id (WockyXmppConnection *connection);
 guint wocky_xmpp_connection_get_sm_sentcount (WockyXmppConnection *connection);
+void wocky_xmpp_connection_set_sm_sentcount (WockyXmppConnection *connection, guint sentcount);
 
 void wocky_xmpp_connection_set_feature (WockyXmppConnection *connection, WockyXmppConnectionFeature feature);
 gboolean wocky_xmpp_connection_get_feature (WockyXmppConnection *connection, WockyXmppConnectionFeature feature);

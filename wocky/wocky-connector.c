@@ -1979,7 +1979,8 @@ sm_enable_recv_cb (GObject *source,
     }
     wocky_xmpp_connection_set_stanza_recv_count (priv->conn, 0);
     wocky_xmpp_connection_set_feature (priv->conn, WOCKY_XMPP_CONNECTION_FEATURE_SM);
-    wocky_xmpp_connection_set_sm_state (priv->conn, session_id, 0);
+    wocky_xmpp_connection_set_sm_id (priv->conn, session_id);
+    wocky_xmpp_connection_set_sm_sentcount (priv->conn, 0);
   }
   DEBUG("sm_complete: now est_ session");
   establish_session (self);
@@ -2197,6 +2198,9 @@ establish_session_sent_cb (GObject *source,
       g_error_free (error);
       return;
     }
+
+  //increase sent count manually -> should the counter move to xmpp_connection completely?
+  wocky_xmpp_connection_set_sm_sentcount (priv->conn, wocky_xmpp_connection_get_sm_sentcount (priv->conn) + 1);
 
   wocky_xmpp_connection_recv_stanza_async (priv->conn, priv->cancellable,
       establish_session_recv_cb, data);

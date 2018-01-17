@@ -1249,10 +1249,9 @@ wocky_xmpp_connection_set_stanza_recv_count (WockyXmppConnection *connection, gu
   wocky_xmpp_reader_set_recv_count (connection->priv->reader, count);
 }
 void
-wocky_xmpp_connection_set_sm_state (WockyXmppConnection *connection, const gchar *id, guint sentcount)
+wocky_xmpp_connection_set_sm_id (WockyXmppConnection *connection, const gchar *id)
 {
   connection->priv->sm_session_id = id;
-  connection->priv->sm_sentcount = sentcount;
 }
 gchar *
 wocky_xmpp_connection_get_sm_id (WockyXmppConnection *connection)
@@ -1264,7 +1263,11 @@ wocky_xmpp_connection_get_sm_sentcount (WockyXmppConnection *connection)
 {
   return connection->priv->sm_sentcount;
 }
-
+void
+wocky_xmpp_connection_set_sm_sentcount (WockyXmppConnection *connection, guint sentcount)
+{
+  connection->priv->sm_sentcount = sentcount;
+}
 void
 wocky_xmpp_connection_set_feature (WockyXmppConnection *connection, WockyXmppConnectionFeature feature)
 {
