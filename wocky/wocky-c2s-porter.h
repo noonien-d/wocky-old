@@ -124,6 +124,10 @@ void wocky_c2s_porter_enable_power_saving_mode (WockyC2SPorter *porter,
 
 WockyStanza* wocky_c2s_porter_pop_unacked_stanzas (WockyC2SPorter *porter);
 
+
+void wocky_c2s_porter_handle_error (WockyC2SPorter *porter, GError *error);
+
+
 G_END_DECLS
 
 #endif /* #ifndef __WOCKY_C2S_PORTER_H__*/

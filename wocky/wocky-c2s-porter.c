@@ -2359,3 +2359,7 @@ wocky_c2s_porter_pop_unacked_stanzas (WockyC2SPorter *porter)
       return NULL;
     }
 }
+
+void wocky_c2s_porter_handle_error (WockyC2SPorter *self, GError *error) {
+  remote_connection_closed (self, error);
+}

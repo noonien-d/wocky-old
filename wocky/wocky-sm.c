@@ -59,12 +59,15 @@ struct _WockySMPrivate
 
   uint count_sent;
   GQueue *stanzas;
+
+  guint ack_timeout;
 };
 
 static gboolean sm_a_cb (WockyPorter *porter, WockyStanza *stanza,
     gpointer data);
 static gboolean sm_r_cb (WockyPorter *porter, WockyStanza *stanza,
     gpointer data);
+static gboolean ack_timeout_cb (gpointer data);
 
 static void
 wocky_sm_init (WockySM *self)
@@ -134,6 +137,7 @@ wocky_sm_constructed (GObject *object)
 
   priv->count_sent = 0;
   priv->stanzas = g_queue_new ();
+  priv->ack_timeout = 0;
 }
 
 static void
@@ -159,6 +163,10 @@ wocky_sm_dispose (GObject *object)
           priv->sm_r_cb);
       priv->sm_r_cb = 0;
     }
+  if (priv->ack_timeout) {
+    g_source_remove (priv->ack_timeout);
+    priv->ack_timeout = 0;
+  }
 
   g_object_unref (priv->porter);
   priv->porter = NULL;
@@ -291,6 +299,11 @@ sm_a_cb (WockyPorter *porter, WockyStanza *stanza_a, gpointer data)
             {
               DEBUG("Got sm-ack h=%s, QUEUE IS EMPTY", val_h);
             }
+
+          if (priv->ack_timeout) {
+            g_source_remove (priv->ack_timeout);
+            priv->ack_timeout = 0;
+          }
         }
       else
         {
@@ -316,6 +329,10 @@ void wocky_sm_request_for_stanza (WockySM *self, WockyStanza *stanza)
   g_queue_push_tail (priv->stanzas, g_object_ref (stanza));
 
   wocky_sm_send_r (priv->porter, priv->count_sent);
+
+  if (priv->ack_timeout == 0) {
+      priv->ack_timeout = g_timeout_add_seconds (30, ack_timeout_cb, self);
+  }
 }
 
 gboolean wocky_sm_is_unacked_stanza (WockySM *self)
@@ -337,4 +354,20 @@ void wocky_sm_set_sentcount (WockySM *self, uint sentcount)
 {
   WockySMPrivate *priv = self->priv;
   priv->count_sent = sentcount;
+}
+
+/*
+ * If this timeout happens, ack hasn't been received after 30 seconds
+ */
+static gboolean ack_timeout_cb (gpointer d) {
+  WockySM *self = WOCKY_SM(d);
+  WockySMPrivate *priv = self->priv;
+
+  priv->ack_timeout = 0;
+
+  DEBUG ("SM ACK Timeout");
+  wocky_c2s_porter_handle_error (WOCKY_C2S_PORTER(priv->porter),
+      g_error_new_literal (WOCKY_XMPP_STREAM_ERROR_CONNECTION_TIMEOUT, 0, "sm ack timeout"));
+
+  return FALSE;
 }
